@@ -36,7 +36,6 @@ def extract_ingredients_other(data, item_name, parent=None):
     if isinstance(data, dict):
         for key, value in data.items():
             if (key == "item" or key == "tag") and parent != "result":
-                print(parent)
                 #if the item found is not the result of the recipe it gets added to the ingredients list:
                 if(value[10:] != item_name):    #(excluding the "minecraft:" prefix in order to only get the item name)
                     ingredient = [key, value, parent]
