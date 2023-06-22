@@ -68,8 +68,10 @@ if __name__ == "__main__":
     print(os.getcwd())  #print current directory
     for root, dirs, files in os.walk("./recipes"):
         for file in files:  #search the recipes folder for every recipe advancement
-            if file.endswith(".json"):
-                filepath = os.path.join(root, file)
+            filepath = os.path.join(root, file)
+            if file.startswith("root.json"):
+                os.remove(filepath)
+            elif file.endswith(".json"):
                 print("\n-", file)
 
                 #search for the corresponding file in the actual recipes folder in order to extract the ingredients
