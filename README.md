@@ -8,6 +8,8 @@ Instructions:
 
 Note: make sure to use the terminal and run the script from the correct directory, if you have (for some reason) a subfolder named ```recipes``` in the location you are running the script from (for example your home directory if you use VSCode with Code Runner), every JSON file present there will be overwritten!
 
+Note 2: If you are on 1.21 or above (which I did not test yet), you should rename the "advancements" folder to "advancement".
+
 The script will change every item recipe advancement to this:
 ```json
 {
