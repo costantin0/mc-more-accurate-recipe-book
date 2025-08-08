@@ -49,10 +49,10 @@ def extract_ingredients_other(data, item_name, parent=None):
     return ingredients
 
 
-def merge_fungible_ingredients(list):
+def merge_fungible_ingredients(ingredients_list):
     ingredients_by_symbol = {}
     resulting_list = []
-    for type, item, symbol in list:
+    for type, item, symbol in ingredients_list:
         #if two items have the same symbol in the recipe (for example "#") they will be put together as fungible
         if symbol in ingredients_by_symbol:
             ingredients_by_symbol[symbol][1].append(item)
@@ -69,7 +69,7 @@ if __name__ == "__main__":
     for root, dirs, files in os.walk("./recipes"):
         for file in files:  #search the recipes folder for every recipe advancement
             filepath = os.path.join(root, file)
-            if file.startswith("root.json"):
+            if file.startswith("root.json"):    #(the root.json file is not needed)
                 os.remove(filepath)
             elif file.endswith(".json"):
                 print("\n-", file)
@@ -88,47 +88,44 @@ if __name__ == "__main__":
                         ingredients = extract_ingredients_other(data, file[:len(file)-5]) #excludes the .json extension and passes the name of the file
                         ingredients = merge_fungible_ingredients(ingredients)
 
-                if file.startswith("root"):
-                    os.remove(filepath) #(the root.json file is not needed)
-                else:
-                    with open(filepath, 'w') as f:
-                        advancement = {
-                            "parent": "minecraft:recipes/root",
-                            "criteria": {
-                                "has_ingredients": {
-                                    "trigger": "minecraft:inventory_changed",
-                                    "conditions": {
-                                        "items": [
-                                            #crafting ingredients will go here
-                                        ]
-                                    }
+                with open(filepath, 'w') as f:
+                    advancement = {
+                        "parent": "minecraft:recipes/root",
+                        "criteria": {
+                            "has_ingredients": {
+                                "trigger": "minecraft:inventory_changed",
+                                "conditions": {
+                                    "items": [
+                                        #crafting ingredients will go here
+                                    ]
                                 }
-                            },
-                            "requirements": [
-                                [
-                                    "has_ingredients"
-                                ]
-                            ],
-                            "rewards": {
-                                "recipes": [
-                                    "minecraft:{}".format(file[:len(file)-5])
-                                ]
                             }
+                        },
+                        "requirements": [
+                            [
+                                "has_ingredients"
+                            ]
+                        ],
+                        "rewards": {
+                            "recipes": [
+                                "minecraft:{}".format(file[:len(file)-5])
+                            ]
                         }
-                        
-                        items = advancement["criteria"]["has_ingredients"]["conditions"]["items"]
-                        
-                        #the ingredients previously extracted from the recipe file are added to the advancement:
-                        if data["type"] == "minecraft:crafting_shapeless":
-                            for item in ingredients:
-                                items.append(item)
-                        else:
-                            for item in ingredients:
-                                if item[0] == "item":
-                                    ingredient = { "items": item[1] }
-                                elif item[0] == "tag":
-                                    ingredient = { "tag": item[1][0] }  #(the tag does not need to be inside a list)
-                                items.append(ingredient)
+                    }
+                    
+                    items = advancement["criteria"]["has_ingredients"]["conditions"]["items"]
+                    
+                    #the ingredients previously extracted from the recipe file are added to the advancement:
+                    if data["type"] == "minecraft:crafting_shapeless":
+                        for item in ingredients:
+                            items.append(item)
+                    else:
+                        for item in ingredients:
+                            if item[0] == "item":
+                                ingredient = { "items": item[1] }
+                            elif item[0] == "tag":
+                                ingredient = { "tag": item[1][0] }  #(the tag does not need to be inside a list)
+                            items.append(ingredient)
 
-                        json_string = json.dumps(advancement, indent=2)
-                        f.write(json_string)
+                    json_string = json.dumps(advancement, indent=2)
+                    f.write(json_string)
